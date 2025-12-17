@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบตรวจสอบห้องทำกิจกรรมพุธบ่าย</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -33,14 +33,14 @@
 
         .container {
             width: 100%;
-            max-width: 350px; /* ขนาดใกล้เคียงมือถือ */
+            max-width: 350px;
             padding: 20px;
         }
 
         .card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 3px; /* Instagram style borders are usually sharp or slightly rounded */
+            border-radius: 3px;
             padding: 40px 30px;
             text-align: center;
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
@@ -50,6 +50,14 @@
             margin-bottom: 30px;
         }
         
+        /* สไตล์สำหรับโลโก้รูปภาพ */
+        .logo-img {
+            width: 120px; /* ปรับขนาดโลโก้ตามความเหมาะสม */
+            height: auto;
+            margin-bottom: 15px;
+            object-fit: contain;
+        }
+
         .logo-area h1 {
             font-size: 24px;
             font-weight: 500;
@@ -83,7 +91,7 @@
             border-color: var(--text-secondary);
         }
 
-        button {
+        button.search-btn {
             width: 100%;
             background-color: var(--primary-color);
             color: white;
@@ -97,16 +105,16 @@
             transition: 0.2s;
         }
 
-        button:hover {
+        button.search-btn:hover {
             background-color: var(--primary-hover);
         }
         
-        button:disabled {
+        button.search-btn:disabled {
             background-color: #b2dffc;
             cursor: default;
         }
 
-        /* Modal Styles (Custom Overlay for minimal look) */
+        /* --- Modal --- */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -144,17 +152,16 @@
         .profile-pic {
             width: 80px;
             height: 80px;
-            background: #eee;
+            background: #f0f0f0;
             border-radius: 50%;
             margin: 0 auto 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 30px;
+            font-size: 35px;
             color: #ccc;
-            border: 2px solid var(--primary-color); /* Story ring look */
-            padding: 2px;
-            background-clip: content-box;
+            border: 3px solid white; 
+            box-shadow: 0 0 0 2px var(--primary-color);
         }
 
         .info-row {
@@ -162,6 +169,8 @@
             justify-content: space-between;
             margin-bottom: 10px;
             font-size: 15px;
+            border-bottom: 1px dashed #eee;
+            padding-bottom: 5px;
         }
 
         .info-label {
@@ -173,6 +182,7 @@
             font-weight: 400;
             color: var(--text-main);
             text-align: right;
+            max-width: 65%;
         }
         
         .schedule-box {
@@ -181,17 +191,22 @@
             padding: 15px;
             margin-top: 15px;
             font-size: 13px;
+            border: 1px solid #eee;
         }
         
         .schedule-item {
             display: flex;
             justify-content: space-between;
-            border-bottom: 1px solid #eee;
-            padding: 8px 0;
+            margin-bottom: 8px;
         }
         
-        .schedule-item:last-child {
-            border-bottom: none;
+        .date-label {
+            color: var(--text-secondary);
+        }
+        
+        .room-value {
+            font-weight: 600;
+            color: var(--primary-color);
         }
 
         .close-btn {
@@ -199,11 +214,15 @@
             background-color: transparent;
             color: var(--text-main);
             border: 1px solid var(--border-color);
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Kanit', sans-serif;
         }
         
         .close-btn:hover {
             background-color: #f0f0f0;
-            color: var(--text-main);
         }
 
         .footer {
@@ -211,7 +230,6 @@
             font-size: 12px;
             color: var(--text-secondary);
         }
-
     </style>
 </head>
 <body>
@@ -219,7 +237,8 @@
     <div class="container">
         <div class="card">
             <div class="logo-area">
-                <div style="font-size:40px; margin-bottom:10px;">🏫</div>
+                <img src="https://drive.google.com/uc?export=view&id=12gLdwUb7VG5mAwanS2yNIcaydtL4U7vN" alt="Logo" class="logo-img">
+                
                 <h1>Check Room</h1>
                 <p>กิจกรรมพุธบ่าย</p>
             </div>
@@ -228,10 +247,10 @@
                 <input type="text" id="studentId" placeholder="รหัสนักศึกษา" inputmode="numeric">
             </div>
 
-            <button onclick="searchData()" id="searchBtn">ค้นหาข้อมูล</button>
+            <button onclick="searchData()" id="searchBtn" class="search-btn">ค้นหาข้อมูล</button>
 
             <div class="footer">
-                มหาวิทยาลัยวลัยลักษณ์
+                ศูนย์ส่งเสริมและพัฒนานักศึกษา
             </div>
         </div>
     </div>
@@ -258,22 +277,24 @@
             </div>
 
             <div class="schedule-box">
-                <div style="font-weight:500; margin-bottom:10px; text-align:center;">📅 ตารางห้องเรียน</div>
-                <div class="schedule-item">
-                    <span>24 ธ.ค. 68</span>
-                    <span style="font-weight:500; color:var(--primary-color);" id="r-d1">-</span>
+                <div style="font-weight:600; margin-bottom:10px; text-align:center; color:#262626;">
+                    📍 ตารางห้องกิจกรรม
                 </div>
                 <div class="schedule-item">
-                    <span>07 ม.ค. 69</span>
-                    <span style="font-weight:500; color:var(--primary-color);" id="r-d2">-</span>
+                    <span class="date-label">24 ธ.ค. 68</span>
+                    <span class="room-value" id="r-d1">-</span>
                 </div>
                 <div class="schedule-item">
-                    <span>21 ม.ค. 69</span>
-                    <span style="font-weight:500; color:var(--primary-color);" id="r-d3">-</span>
+                    <span class="date-label">07 ม.ค. 69</span>
+                    <span class="room-value" id="r-d2">-</span>
                 </div>
                 <div class="schedule-item">
-                    <span>28 ม.ค. 69</span>
-                    <span style="font-weight:500; color:var(--primary-color);" id="r-d4">-</span>
+                    <span class="date-label">21 ม.ค. 69</span>
+                    <span class="room-value" id="r-d3">-</span>
+                </div>
+                <div class="schedule-item">
+                    <span class="date-label">28 ม.ค. 69</span>
+                    <span class="room-value" id="r-d4">-</span>
                 </div>
             </div>
 
@@ -282,10 +303,8 @@
     </div>
 
     <script>
-        // ************************************************
-        // นำ URL Web App ที่ได้จากการ Deploy มาวางตรงนี้
-        // ************************************************
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbykMu-al2ECFjZRVc94ORIPBJ8JRjXZHxwm-iZQ4bwzvTC-skhrOzTTcLNkFhU0US2w/exec"; 
+        // 2. ฝัง SCRIPT_URL ที่ระบุมา
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbykMu-al2ECFjZRVc94ORIPBJ8JRjXZHxwm-iZQ4bwzvTC-skhrOzTTcLNkFhU0US2w/exec";
 
         function searchData() {
             const studentId = document.getElementById('studentId').value.trim();
@@ -301,26 +320,19 @@
                 return;
             }
 
-            // UI Loading state
             btn.innerHTML = 'กำลังค้นหา...';
             btn.disabled = true;
 
-            // สร้าง Script tag สำหรับ JSONP
-            // เทคนิคนี้จะสร้าง tag <script src="..."> ขึ้นมาแล้วโหลดไฟล์ JS กลับมา
-            // ไฟล์ที่กลับมาจะเรียกฟังก์ชัน 'handleResponse' อัตโนมัติ
             const script = document.createElement('script');
             const callbackName = 'handleResponse';
-            
-            // ส่งค่า id และชื่อ callback function ไป
             script.src = `${SCRIPT_URL}?id=${studentId}&callback=${callbackName}`;
             
-            // กรณีเกิด Error ในการโหลด Script
             script.onerror = function() {
                 btn.innerHTML = 'ค้นหาข้อมูล';
                 btn.disabled = false;
                 Swal.fire({
                     icon: 'error',
-                    title: 'ข้อผิดพลาด',
+                    title: 'เกิดข้อผิดพลาด',
                     text: 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้',
                     confirmButtonColor: '#0095f6'
                 });
@@ -329,13 +341,11 @@
             document.body.appendChild(script);
         }
 
-        // ฟังก์ชัน Callback ที่จะถูกเรียกโดย Google Apps Script
         function handleResponse(response) {
             const btn = document.getElementById('searchBtn');
             btn.innerHTML = 'ค้นหาข้อมูล';
             btn.disabled = false;
 
-            // ลบ script tag ออกเพื่อความสะอาด
             const lastScript = document.body.lastChild;
             if(lastScript.tagName === 'SCRIPT') {
                 document.body.removeChild(lastScript);
@@ -357,20 +367,17 @@
             const s = data.student;
             const r = data.room;
 
-            // ใส่ข้อมูล Student
             document.getElementById('m-id').innerText = s.id;
             document.getElementById('m-name').innerText = `${s.prefix}${s.name} ${s.surname}`;
             document.getElementById('m-school').innerText = s.school;
             document.getElementById('m-group').innerText = s.group;
             document.getElementById('m-seq').innerText = s.sequence;
 
-            // ใส่ข้อมูล Room
             document.getElementById('r-d1').innerText = r.date1;
             document.getElementById('r-d2').innerText = r.date2;
             document.getElementById('r-d3').innerText = r.date3;
             document.getElementById('r-d4').innerText = r.date4;
 
-            // แสดง Modal
             const modal = document.getElementById('resultModal');
             modal.style.display = 'flex';
         }
@@ -380,7 +387,6 @@
             document.getElementById('studentId').value = '';
         }
         
-        // กด Enter เพื่อค้นหา
         document.getElementById('studentId').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 searchData();

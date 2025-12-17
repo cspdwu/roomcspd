@@ -50,11 +50,12 @@
             margin-bottom: 30px;
         }
         
-        /* สไตล์สำหรับโลโก้รูปภาพ */
+        /* --- แก้ไข CSS สำหรับโลโก้แบบแบนเนอร์ --- */
         .logo-img {
-            width: 120px; /* ปรับขนาดโลโก้ตามความเหมาะสม */
-            height: auto;
-            margin-bottom: 15px;
+            width: 100%;      /* ให้กว้างเต็มพื้นที่การ์ด */
+            max-width: 280px; /* จำกัดความกว้างสูงสุดไม่ให้เกินนี้ */
+            height: auto;     /* ปรับความสูงอัตโนมัติตามสัดส่วน */
+            margin-bottom: 20px; /* เพิ่มระยะห่างด้านล่าง */
             object-fit: contain;
         }
 
@@ -237,7 +238,7 @@
     <div class="container">
         <div class="card">
             <div class="logo-area">
-                <img src="https://i.postimg.cc/Cxksxrj8/x-ks'ry-x-wu-(2).png" alt="Logo" class="logo-img">
+                <img src="https://i.postimg.cc/W1yzxsDr/x-ks'ry-x-wu-(2).png" alt="ศูนย์ส่งเสริมและพัฒนานักศึกษา" class="logo-img">
                 
                 <h1>Check Room</h1>
                 <p>กิจกรรมพุธบ่าย</p>
@@ -303,7 +304,7 @@
     </div>
 
     <script>
-        // 2. ฝัง SCRIPT_URL ที่ระบุมา
+        // URL ของ App Script ที่ถูกต้อง
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbykMu-al2ECFjZRVc94ORIPBJ8JRjXZHxwm-iZQ4bwzvTC-skhrOzTTcLNkFhU0US2w/exec";
 
         function searchData() {

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบตรวจสอบห้องทำกิจกรรมพุธบ่าย</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        :root {
+            --bg-color: #fafafa;
+            --card-bg: #ffffff;
+            --primary-color: #0095f6;
+            --primary-hover: #1877f2;
+            --text-main: #262626;
+            --text-secondary: #8e8e8e;
+            --border-color: #dbdbdb;
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text-main);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 350px; /* ขนาดใกล้เคียงมือถือ */
+            padding: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 3px; /* Instagram style borders are usually sharp or slightly rounded */
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .logo-area {
+            margin-bottom: 30px;
+        }
+        
+        .logo-area h1 {
+            font-size: 24px;
+            font-weight: 500;
+            margin: 0;
+            color: var(--text-main);
+        }
+
+        .logo-area p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 9px 8px;
+            background: #fafafa;
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            font-family: 'Kanit', sans-serif;
+            font-size: 14px;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--text-secondary);
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 7px;
+            font-family: 'Kanit', sans-serif;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        button:disabled {
+            background-color: #b2dffc;
+            cursor: default;
+        }
+
+        /* Modal Styles (Custom Overlay for minimal look) */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.65);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(2px);
+        }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 12px;
+            padding: 25px;
+            position: relative;
+            text-align: left;
+            animation: popIn 0.3s ease;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .profile-pic {
+            width: 80px;
+            height: 80px;
+            background: #eee;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: #ccc;
+            border: 2px solid var(--primary-color); /* Story ring look */
+            padding: 2px;
+            background-clip: content-box;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+
+        .info-label {
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .info-value {
+            font-weight: 400;
+            color: var(--text-main);
+            text-align: right;
+        }
+        
+        .schedule-box {
+            background-color: #fafafa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 13px;
+        }
+        
+        .schedule-item {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #eee;
+            padding: 8px 0;
+        }
+        
+        .schedule-item:last-child {
+            border-bottom: none;
+        }
+
+        .close-btn {
+            margin-top: 20px;
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+        
+        .close-btn:hover {
+            background-color: #f0f0f0;
+            color: var(--text-main);
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="card">
+            <div class="logo-area">
+                <div style="font-size:40px; margin-bottom:10px;">🏫</div>
+                <h1>Check Room</h1>
+                <p>กิจกรรมพุธบ่าย</p>
+            </div>
+
+            <div class="form-group">
+                <input type="text" id="studentId" placeholder="รหัสนักศึกษา" inputmode="numeric">
+            </div>
+
+            <button onclick="searchData()" id="searchBtn">ค้นหาข้อมูล</button>
+
+            <div class="footer">
+                มหาวิทยาลัยวลัยลักษณ์
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="resultModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="profile-pic">👤</div>
+                <h3 id="m-name" style="margin:0; font-size:18px;">-</h3>
+                <p id="m-id" style="margin:5px 0 0; color:var(--text-secondary); font-size:14px;">-</p>
+            </div>
+            
+            <div class="info-row">
+                <span class="info-label">สำนักวิชา</span>
+                <span class="info-value" id="m-school">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">กลุ่มที่</span>
+                <span class="info-value" id="m-group">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">ลำดับที่</span>
+                <span class="info-value" id="m-seq">-</span>
+            </div>
+
+            <div class="schedule-box">
+                <div style="font-weight:500; margin-bottom:10px; text-align:center;">📅 ตารางห้องเรียน</div>
+                <div class="schedule-item">
+                    <span>24 ธ.ค. 68</span>
+                    <span style="font-weight:500; color:var(--primary-color);" id="r-d1">-</span>
+                </div>
+                <div class="schedule-item">
+                    <span>07 ม.ค. 69</span>
+                    <span style="font-weight:500; color:var(--primary-color);" id="r-d2">-</span>
+                </div>
+                <div class="schedule-item">
+                    <span>21 ม.ค. 69</span>
+                    <span style="font-weight:500; color:var(--primary-color);" id="r-d3">-</span>
+                </div>
+                <div class="schedule-item">
+                    <span>28 ม.ค. 69</span>
+                    <span style="font-weight:500; color:var(--primary-color);" id="r-d4">-</span>
+                </div>
+            </div>
+
+            <button class="close-btn" onclick="closeModal()">ปิดหน้าต่าง</button>
+        </div>
+    </div>
+
+    <script>
+        // ************************************************
+        // นำ URL Web App ที่ได้จากการ Deploy มาวางตรงนี้
+        // ************************************************
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbykMu-al2ECFjZRVc94ORIPBJ8JRjXZHxwm-iZQ4bwzvTC-skhrOzTTcLNkFhU0US2w/exec"; 
+
+        function searchData() {
+            const studentId = document.getElementById('studentId').value.trim();
+            const btn = document.getElementById('searchBtn');
+
+            if (!studentId) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'แจ้งเตือน',
+                    text: 'กรุณากรอกรหัสนักศึกษา',
+                    confirmButtonColor: '#0095f6'
+                });
+                return;
+            }
+
+            // UI Loading state
+            btn.innerHTML = 'กำลังค้นหา...';
+            btn.disabled = true;
+
+            // สร้าง Script tag สำหรับ JSONP
+            // เทคนิคนี้จะสร้าง tag <script src="..."> ขึ้นมาแล้วโหลดไฟล์ JS กลับมา
+            // ไฟล์ที่กลับมาจะเรียกฟังก์ชัน 'handleResponse' อัตโนมัติ
+            const script = document.createElement('script');
+            const callbackName = 'handleResponse';
+            
+            // ส่งค่า id และชื่อ callback function ไป
+            script.src = `${SCRIPT_URL}?id=${studentId}&callback=${callbackName}`;
+            
+            // กรณีเกิด Error ในการโหลด Script
+            script.onerror = function() {
+                btn.innerHTML = 'ค้นหาข้อมูล';
+                btn.disabled = false;
+                Swal.fire({
+                    icon: 'error',
+                    title: 'ข้อผิดพลาด',
+                    text: 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้',
+                    confirmButtonColor: '#0095f6'
+                });
+            };
+
+            document.body.appendChild(script);
+        }
+
+        // ฟังก์ชัน Callback ที่จะถูกเรียกโดย Google Apps Script
+        function handleResponse(response) {
+            const btn = document.getElementById('searchBtn');
+            btn.innerHTML = 'ค้นหาข้อมูล';
+            btn.disabled = false;
+
+            // ลบ script tag ออกเพื่อความสะอาด
+            const lastScript = document.body.lastChild;
+            if(lastScript.tagName === 'SCRIPT') {
+                document.body.removeChild(lastScript);
+            }
+
+            if (response.status === 'success') {
+                showModal(response.data);
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'ไม่พบข้อมูล',
+                    text: response.message,
+                    confirmButtonColor: '#0095f6'
+                });
+            }
+        }
+
+        function showModal(data) {
+            const s = data.student;
+            const r = data.room;
+
+            // ใส่ข้อมูล Student
+            document.getElementById('m-id').innerText = s.id;
+            document.getElementById('m-name').innerText = `${s.prefix}${s.name} ${s.surname}`;
+            document.getElementById('m-school').innerText = s.school;
+            document.getElementById('m-group').innerText = s.group;
+            document.getElementById('m-seq').innerText = s.sequence;
+
+            // ใส่ข้อมูล Room
+            document.getElementById('r-d1').innerText = r.date1;
+            document.getElementById('r-d2').innerText = r.date2;
+            document.getElementById('r-d3').innerText = r.date3;
+            document.getElementById('r-d4').innerText = r.date4;
+
+            // แสดง Modal
+            const modal = document.getElementById('resultModal');
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('resultModal').style.display = 'none';
+            document.getElementById('studentId').value = '';
+        }
+        
+        // กด Enter เพื่อค้นหา
+        document.getElementById('studentId').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                searchData();
+            }
+        });
+    </script>
+</body>
+</html>

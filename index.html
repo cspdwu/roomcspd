@@ -50,13 +50,14 @@
             margin-bottom: 30px;
         }
         
-        /* --- แก้ไข CSS สำหรับโลโก้แบบแบนเนอร์ --- */
+        /* --- แก้ไข CSS สำหรับตราสัญลักษณ์ (ให้มีขนาดพอดี) --- */
         .logo-img {
-            width: 100%;      /* ให้กว้างเต็มพื้นที่การ์ด */
-            max-width: 280px; /* จำกัดความกว้างสูงสุดไม่ให้เกินนี้ */
-            height: auto;     /* ปรับความสูงอัตโนมัติตามสัดส่วน */
-            margin-bottom: 20px; /* เพิ่มระยะห่างด้านล่าง */
+            width: auto;        /* ให้ความกว้างปรับตามความสูง */
+            height: 90px;       /* กำหนดความสูงที่เหมาะสม (ไม่ใหญ่เกินไป) */
+            max-width: 100%;    /* ป้องกันไม่ให้ล้นจอในมือถือจอเล็ก */
+            margin-bottom: 15px;
             object-fit: contain;
+            display: inline-block; /* ช่วยให้จัดกึ่งกลางได้ดีขึ้น */
         }
 
         .logo-area h1 {
@@ -238,7 +239,7 @@
     <div class="container">
         <div class="card">
             <div class="logo-area">
-                <img src="https://i.postimg.cc/W1yzxsDr/x-ks'ry-x-wu-(2).png" alt="ศูนย์ส่งเสริมและพัฒนานักศึกษา" class="logo-img">
+                <img src="https://upload.wikimedia.org/wikipedia/th/e/e3/Walailak_University_Logo.png" alt="ตรามหาวิทยาลัยวลัยลักษณ์" class="logo-img">
                 
                 <h1>Check Room</h1>
                 <p>กิจกรรมพุธบ่าย</p>
